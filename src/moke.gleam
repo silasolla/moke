@@ -54,12 +54,9 @@ fn set_timeout(callback: fn() -> Nil, ms: Int) -> Nil
 pub fn view(model: Model) -> Element(Msg) {
   html.div(
     [
-      attribute.style("max-width", "560px"),
-      attribute.style("margin", "0 auto"),
-      attribute.style("padding", "2rem 1rem"),
-      attribute.style("font-family", "'Helvetica Neue', Arial, sans-serif"),
-      attribute.style("text-align", "center"),
-      attribute.style("color", "#333"),
+      attribute.class(
+        "max-w-[560px] mx-auto py-8 px-4 font-sans text-center text-[#333]",
+      ),
     ],
     [header_view(), moke_view(model)],
   )
@@ -67,21 +64,11 @@ pub fn view(model: Model) -> Element(Msg) {
 
 fn header_view() -> Element(Msg) {
   html.div([], [
-    html.h1(
-      [
-        attribute.style("font-size", "2rem"),
-        attribute.style("margin-bottom", "0.25rem"),
-        attribute.style("letter-spacing", "0.05em"),
-      ],
-      [html.text(page_title)],
-    ),
+    html.h1([attribute.class("text-[2rem] mb-1 tracking-[0.05em]")], [
+      html.text(page_title),
+    ]),
     html.p(
-      [
-        attribute.style("margin", "0 0 1.5rem"),
-        attribute.style("font-size", "0.95rem"),
-        attribute.style("color", "#888"),
-        attribute.style("letter-spacing", "0.03em"),
-      ],
+      [attribute.class("mb-6 text-[0.95rem] text-[#888] tracking-[0.03em]")],
       [html.text(page_subtitle)],
     ),
   ])
@@ -92,24 +79,16 @@ fn moke_view(model: Model) -> Element(Msg) {
     Asleep -> moke_src_sleep
     Awake -> moke_src_awake
   }
-  html.figure([attribute.style("margin", "0")], [
+  html.figure([attribute.class("m-0")], [
     html.img([
       attribute.src(src),
       attribute.alt(moke_alt),
       event.on_click(ImageClicked),
-      attribute.style("max-width", "100%"),
-      attribute.style("border-radius", "12px"),
-      attribute.style("box-shadow", "0 4px 16px rgba(0,0,0,0.15)"),
-      attribute.style("cursor", "pointer"),
+      attribute.class("max-w-full rounded-xl shadow-lg cursor-pointer"),
     ]),
-    html.figcaption(
-      [
-        attribute.style("margin-top", "0.75rem"),
-        attribute.style("font-size", "0.9rem"),
-        attribute.style("color", "#666"),
-      ],
-      [html.text(moke_caption)],
-    ),
+    html.figcaption([attribute.class("mt-3 text-[0.9rem] text-[#666]")], [
+      html.text(moke_caption),
+    ]),
   ])
 }
 
