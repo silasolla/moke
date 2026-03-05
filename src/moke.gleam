@@ -81,6 +81,19 @@ fn moke_view(model: Model) -> Element(Msg) {
     Awake -> #("opacity-0", "opacity-100")
   }
   html.figure([attribute.class("m-0")], [
+    html.style(
+      [],
+      "
+      @keyframes shake {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        25% { transform: translateY(-2px) rotate(-1deg); }
+        75% { transform: translateY(2px) rotate(1deg); }
+      }
+      .animate-shake {
+        animation: shake 0.15s infinite ease-in-out;
+      }
+    ",
+    ),
     html.div([attribute.class("grid place-items-center")], [
       html.img([
         attribute.src(moke_src_sleep),
@@ -92,7 +105,7 @@ fn moke_view(model: Model) -> Element(Msg) {
         attribute.src(moke_src_awake),
         attribute.alt(moke_alt),
         event.on_click(ImageClicked),
-        attribute.class(base_img_class <> awake_opacity),
+        attribute.class(base_img_class <> awake_opacity <> " animate-shake"),
       ]),
     ]),
     html.figcaption([attribute.class("mt-3 text-sm text-gray-500")], [
