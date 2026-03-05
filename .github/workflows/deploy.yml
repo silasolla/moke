@@ -31,7 +31,7 @@ jobs:
         run: gleam deps download
 
       - name: Build
-        run: gleam run -m lustre/dev_tools -- build
+        run: gleam run -m lustre/dev -- build
 
       - name: Deploy to Cloudflare Pages
         if: github.ref == 'refs/heads/main'

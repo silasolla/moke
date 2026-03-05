@@ -1,24 +1,28 @@
-# moke
+# もけ寄生
 
-[![Package Version](https://img.shields.io/hexpm/v/moke)](https://hex.pm/packages/moke)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/moke/)
+[Gleam](https://gleam.run) + [Lustre](https://lustre.build) のシンプルなプロジェクトです．Cloudflare Pages に SSG でデプロイします．
 
-```sh
-gleam add moke@1
-```
-```gleam
-import moke
-
-pub fn main() -> Nil {
-  // TODO: An example of the project in use
-}
-```
-
-Further documentation can be found at <https://hexdocs.pm/moke>.
-
-## Development
+## 開発
 
 ```sh
-gleam run   # Run the project
-gleam test  # Run the tests
+# 依存関係のインストール
+gleam deps download
+
+# 開発サーバの起動
+gleam run -m lustre/dev -- dev 
+
+# テストの実行
+gleam test
+
+# コードのフォーマット
+gleam format src test
 ```
+
+## ビルド・デプロイ
+
+```sh
+# dist/ にビルド
+gleam run -m lustre/dev -- build 
+```
+
+`main` ブランチへの push で GitHub Actions が自動的にビルドし Cloudflare Pages にデプロイします．

@@ -28,26 +28,23 @@ pub fn view() -> Element(Nil) {
         ],
         [html.text(page_title)],
       ),
-      html.figure(
-        [attribute.style("margin", "0")],
-        [
-          html.img([
-            attribute.src(moke_src),
-            attribute.alt(moke_caption),
-            attribute.style("max-width", "100%"),
-            attribute.style("border-radius", "12px"),
-            attribute.style("box-shadow", "0 4px 16px rgba(0,0,0,0.15)"),
-          ]),
-          html.figcaption(
-            [
-              attribute.style("margin-top", "0.75rem"),
-              attribute.style("font-size", "0.9rem"),
-              attribute.style("color", "#666"),
-            ],
-            [html.text(moke_caption)],
-          ),
-        ],
-      ),
+      html.figure([attribute.style("margin", "0")], [
+        html.img([
+          attribute.src(moke_src),
+          attribute.alt(moke_caption),
+          attribute.style("max-width", "100%"),
+          attribute.style("border-radius", "12px"),
+          attribute.style("box-shadow", "0 4px 16px rgba(0,0,0,0.15)"),
+        ]),
+        html.figcaption(
+          [
+            attribute.style("margin-top", "0.75rem"),
+            attribute.style("font-size", "0.9rem"),
+            attribute.style("color", "#666"),
+          ],
+          [html.text(moke_caption)],
+        ),
+      ]),
     ],
   )
 }
