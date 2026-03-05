@@ -1,9 +1,10 @@
 name: Deploy to Cloudflare Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: ["test"]
     branches: [main]
-  pull_request:
+    types: [completed]
   workflow_dispatch:
 
 concurrency:
@@ -13,6 +14,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: read
       deployments: write
@@ -34,7 +36,6 @@ jobs:
         run: gleam run -m lustre/dev -- build
 
       - name: Deploy to Cloudflare Pages
-        if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
