@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* ビルドで *.gleam のクラスが消えないようにする */
 @source "./**/*.gleam";
 
 @theme {
