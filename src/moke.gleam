@@ -91,19 +91,6 @@ fn moke_view(model: Model) -> Element(Msg) {
     )
   }
   html.figure([attribute.class("m-0")], [
-    html.style(
-      [],
-      "
-      @keyframes shake {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        25% { transform: translateY(-2px) rotate(-1deg); }
-        75% { transform: translateY(2px) rotate(1deg); }
-      }
-      .animate-shake {
-        animation: shake 0.15s infinite ease-in-out;
-      }
-    ",
-    ),
     html.div([attribute.class("grid place-items-center")], [
       html.img([
         attribute.src(moke_src_sleep),
