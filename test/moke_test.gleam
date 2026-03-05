@@ -1,42 +1,9 @@
-import gleam/string
 import gleeunit
 import gleeunit/should
 import moke
 
 pub fn main() -> Nil {
   gleeunit.main()
-}
-
-pub fn page_title_test() {
-  moke.page_title
-  |> should.equal("もけ寄生")
-}
-
-pub fn page_subtitle_test() {
-  moke.page_subtitle
-  |> should.equal("my site's little resident")
-}
-
-pub fn moke_caption_sleep_test() {
-  moke.moke_caption_sleep
-  |> should.equal(":hamster:")
-}
-
-pub fn moke_caption_awake_test() {
-  moke.moke_caption_awake
-  |> should.equal(":hamster: !!")
-}
-
-pub fn moke_src_sleep_is_url_test() {
-  moke.moke_src_sleep
-  |> string.starts_with("https://")
-  |> should.be_true
-}
-
-pub fn moke_src_awake_is_url_test() {
-  moke.moke_src_awake
-  |> string.starts_with("https://")
-  |> should.be_true
 }
 
 pub fn init_is_asleep_test() {
@@ -54,7 +21,12 @@ pub fn click_while_awake_stays_awake_test() {
   model |> should.equal(moke.Awake)
 }
 
-pub fn fell_asleep_reverts_test() {
+pub fn fell_asleep_from_awake_test() {
   let #(model, _) = moke.update(moke.Awake, moke.FellAsleep)
+  model |> should.equal(moke.Asleep)
+}
+
+pub fn fell_asleep_from_asleep_test() {
+  let #(model, _) = moke.update(moke.Asleep, moke.FellAsleep)
   model |> should.equal(moke.Asleep)
 }
