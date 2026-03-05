@@ -5,6 +5,8 @@ import lustre/element/html
 
 pub const page_title = "もけ寄生"
 
+pub const page_subtitle = "my site's little resident"
+
 pub const moke_src = "https://image.silasol.la/moke/sleep.webp"
 
 pub const moke_caption = ":hamster:"
@@ -23,10 +25,19 @@ pub fn view() -> Element(Nil) {
       html.h1(
         [
           attribute.style("font-size", "2rem"),
-          attribute.style("margin-bottom", "1.5rem"),
+          attribute.style("margin-bottom", "0.25rem"),
           attribute.style("letter-spacing", "0.05em"),
         ],
         [html.text(page_title)],
+      ),
+      html.p(
+        [
+          attribute.style("margin", "0 0 1.5rem"),
+          attribute.style("font-size", "0.95rem"),
+          attribute.style("color", "#888"),
+          attribute.style("letter-spacing", "0.03em"),
+        ],
+        [html.text(page_subtitle)],
       ),
       html.figure([attribute.style("margin", "0")], [
         html.img([
