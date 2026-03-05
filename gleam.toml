@@ -13,6 +13,23 @@ target = "javascript"
 # For a full reference of all the available options, you can have a look at
 # https://gleam.run/writing-gleam/gleam-toml/.
 
+[tools.lustre.html]
+lang = "ja"
+title = "もけ寄生"
+
+[[tools.lustre.html.links]]
+rel = "preconnect"
+href = "https://fonts.googleapis.com"
+
+[[tools.lustre.html.links]]
+rel = "preconnect"
+href = "https://fonts.gstatic.com"
+crossorigin = true
+
+[[tools.lustre.html.links]]
+rel = "stylesheet"
+href = "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap"
+
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"
 lustre = ">= 5.6.0 and < 6.0.0"
