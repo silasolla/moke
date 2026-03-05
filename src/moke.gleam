@@ -52,10 +52,10 @@ fn revert_after(ms: Int) -> effect.Effect(Msg) {
 fn set_timeout(callback: fn() -> Nil, ms: Int) -> Nil
 
 pub fn view(model: Model) -> Element(Msg) {
-  html.div(
+  html.main(
     [
       attribute.class(
-        "max-w-[560px] mx-auto py-8 px-4 font-sans text-center text-[#333]",
+        "max-w-xl mx-auto py-8 px-4 font-sans text-center text-gray-800",
       ),
     ],
     [header_view(), moke_view(model)],
@@ -63,30 +63,39 @@ pub fn view(model: Model) -> Element(Msg) {
 }
 
 fn header_view() -> Element(Msg) {
-  html.div([], [
-    html.h1([attribute.class("text-[2rem] mb-1 tracking-[0.05em]")], [
+  html.header([], [
+    html.h1([attribute.class("text-4xl mb-1 tracking-wider")], [
       html.text(page_title),
     ]),
-    html.p(
-      [attribute.class("mb-6 text-[0.95rem] text-[#888] tracking-[0.03em]")],
-      [html.text(page_subtitle)],
-    ),
+    html.p([attribute.class("mb-6 text-sm text-gray-400 tracking-wide")], [
+      html.text(page_subtitle),
+    ]),
   ])
 }
 
 fn moke_view(model: Model) -> Element(Msg) {
-  let src = case model {
-    Asleep -> moke_src_sleep
-    Awake -> moke_src_awake
+  let base_img_class =
+    " col-start-1 row-start-1 max-w-full cursor-pointer transition-opacity duration-500 drop-shadow-lg "
+  let #(sleep_opacity, awake_opacity) = case model {
+    Asleep -> #("opacity-100", "opacity-0")
+    Awake -> #("opacity-0", "opacity-100")
   }
   html.figure([attribute.class("m-0")], [
-    html.img([
-      attribute.src(src),
-      attribute.alt(moke_alt),
-      event.on_click(ImageClicked),
-      attribute.class("max-w-full rounded-xl shadow-lg cursor-pointer"),
+    html.div([attribute.class("grid place-items-center")], [
+      html.img([
+        attribute.src(moke_src_sleep),
+        attribute.alt(moke_alt),
+        event.on_click(ImageClicked),
+        attribute.class(base_img_class <> sleep_opacity),
+      ]),
+      html.img([
+        attribute.src(moke_src_awake),
+        attribute.alt(moke_alt),
+        event.on_click(ImageClicked),
+        attribute.class(base_img_class <> awake_opacity),
+      ]),
     ]),
-    html.figcaption([attribute.class("mt-3 text-[0.9rem] text-[#666]")], [
+    html.figcaption([attribute.class("mt-3 text-sm text-gray-500")], [
       html.text(moke_caption),
     ]),
   ])
