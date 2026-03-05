@@ -2,6 +2,9 @@ name = "moke"
 version = "1.0.0"
 target = "javascript"
 
+[tools.lustre.build]
+minify = true
+
 [tools.lustre.html]
 lang = "ja"
 title = "もけ寄生"
