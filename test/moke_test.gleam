@@ -17,9 +17,14 @@ pub fn page_subtitle_test() {
   |> should.equal("my site's little resident")
 }
 
-pub fn moke_caption_test() {
-  moke.moke_caption
+pub fn moke_caption_sleep_test() {
+  moke.moke_caption_sleep
   |> should.equal(":hamster:")
+}
+
+pub fn moke_caption_awake_test() {
+  moke.moke_caption_awake
+  |> should.equal(":hamster: !!")
 }
 
 pub fn moke_src_sleep_is_url_test() {

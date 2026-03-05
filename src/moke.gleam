@@ -15,7 +15,9 @@ pub const moke_src_awake = "https://image.silasol.la/moke/awake.webp"
 
 pub const moke_alt = "もけだよ"
 
-pub const moke_caption = ":hamster:"
+pub const moke_caption_sleep = ":hamster:"
+
+pub const moke_caption_awake = ":hamster: !!"
 
 pub const awake_duration_ms = 5000
 
@@ -75,10 +77,18 @@ fn header_view() -> Element(Msg) {
 
 fn moke_view(model: Model) -> Element(Msg) {
   let base_img_class =
-    " col-start-1 row-start-1 max-w-full cursor-pointer transition-opacity duration-500 drop-shadow-lg "
-  let #(sleep_opacity, awake_opacity) = case model {
-    Asleep -> #("opacity-100", "opacity-0")
-    Awake -> #("opacity-0", "opacity-100")
+    " col-start-1 row-start-1 max-w-full select-none cursor-pointer transition-opacity duration-500 drop-shadow-lg "
+  let #(sleep_class, awake_class, caption) = case model {
+    Asleep -> #(
+      base_img_class <> "opacity-100",
+      base_img_class <> "opacity-0",
+      moke_caption_sleep,
+    )
+    Awake -> #(
+      base_img_class <> "opacity-0",
+      base_img_class <> "opacity-100 animate-shake",
+      moke_caption_awake,
+    )
   }
   html.figure([attribute.class("m-0")], [
     html.style(
@@ -98,18 +108,20 @@ fn moke_view(model: Model) -> Element(Msg) {
       html.img([
         attribute.src(moke_src_sleep),
         attribute.alt(moke_alt),
+        attribute.attribute("draggable", "false"),
         event.on_click(ImageClicked),
-        attribute.class(base_img_class <> sleep_opacity),
+        attribute.class(sleep_class),
       ]),
       html.img([
         attribute.src(moke_src_awake),
         attribute.alt(moke_alt),
+        attribute.attribute("draggable", "false"),
         event.on_click(ImageClicked),
-        attribute.class(base_img_class <> awake_opacity <> " animate-shake"),
+        attribute.class(awake_class),
       ]),
     ]),
     html.figcaption([attribute.class("mt-3 text-sm text-gray-500")], [
-      html.text(moke_caption),
+      html.text(caption),
     ]),
   ])
 }
