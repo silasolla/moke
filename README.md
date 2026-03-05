@@ -1,6 +1,8 @@
 # もけ寄生
 
-[Gleam](https://gleam.run) + [Lustre](https://lustre.build) のシンプルなプロジェクトです．Cloudflare Pages に SSG でデプロイします．
+[Gleam](https://gleam.run) + [Lustre](https://lustre.build) のシンプルなプロジェクトです．Cloudflare Pages にホスティングします．
+
+Gleam が JavaScript にコンパイルされて，ブラウザ上で動作 (CSR) します．
 
 ## 開発
 
