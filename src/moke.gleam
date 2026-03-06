@@ -78,19 +78,21 @@ fn header_view() -> Element(Msg) {
 fn moke_view(model: Model) -> Element(Msg) {
   let base_img_class =
     " col-start-1 row-start-1 max-w-full select-none cursor-pointer transition-opacity duration-500 drop-shadow-lg "
-  let #(sleep_class, awake_class, caption) = case model {
+  let #(sleep_class, awake_class, figure_class, caption) = case model {
     Asleep -> #(
-      base_img_class <> "opacity-100",
+      base_img_class <> "opacity-100 animate-breathe",
       base_img_class <> "opacity-0",
+      "m-0 hover:scale-105 transition-transform duration-200",
       moke_caption_sleep,
     )
     Awake -> #(
       base_img_class <> "opacity-0",
       base_img_class <> "opacity-100 animate-shake",
+      "m-0",
       moke_caption_awake,
     )
   }
-  html.figure([attribute.class("m-0")], [
+  html.figure([attribute.class(figure_class)], [
     html.div([attribute.class("grid place-items-center")], [
       html.img([
         attribute.src(moke_src_sleep),
