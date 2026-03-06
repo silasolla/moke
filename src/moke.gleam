@@ -13,41 +13,66 @@ pub const moke_src_sleep = "https://image.silasol.la/moke/sleep.webp"
 
 pub const moke_src_awake = "https://image.silasol.la/moke/awake.webp"
 
+pub const moke_src_tired = "https://image.silasol.la/moke/tired.webp"
+
 pub const moke_alt = "もけだよ"
 
 pub const moke_caption_sleep = ":hamster:"
 
-pub const moke_caption_awake = ":hamster: !!"
+pub const moke_caption_awake = ":hamster: (｀･ω･´)"
+
+pub const moke_caption_tired = ":hamster: ( ´△｀)"
 
 pub const awake_duration_ms = 5000
 
+pub const tired_duration_ms = 3000
+
+pub const wake_threshold = 5
+
 pub type Model {
-  Asleep
-  Awake
+  Asleep(wake_count: Int)
+  Awake(wake_count: Int)
+  Tired
 }
 
 pub type Msg {
   ImageClicked
   FellAsleep
+  RecoveredFromTired
 }
 
 pub fn init(_flags: Nil) -> #(Model, effect.Effect(Msg)) {
-  #(Asleep, effect.none())
+  #(Asleep(0), effect.none())
 }
 
 pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   case msg {
     ImageClicked ->
       case model {
-        Asleep -> #(Awake, revert_after(awake_duration_ms))
-        Awake -> #(Awake, effect.none())
+        Asleep(n) -> #(Awake(n + 1), revert_after(awake_duration_ms))
+        Awake(_) | Tired -> #(model, effect.none())
       }
-    FellAsleep -> #(Asleep, effect.none())
+    FellAsleep ->
+      case model {
+        Awake(n) ->
+          case n >= wake_threshold {
+            True -> #(Tired, revert_after_tired(tired_duration_ms))
+            False -> #(Asleep(n), effect.none())
+          }
+        Asleep(_) | Tired -> #(model, effect.none())
+      }
+    RecoveredFromTired -> #(Asleep(0), effect.none())
   }
 }
 
 fn revert_after(ms: Int) -> effect.Effect(Msg) {
   effect.from(fn(dispatch) { set_timeout(fn() { dispatch(FellAsleep) }, ms) })
+}
+
+fn revert_after_tired(ms: Int) -> effect.Effect(Msg) {
+  effect.from(fn(dispatch) {
+    set_timeout(fn() { dispatch(RecoveredFromTired) }, ms)
+  })
 }
 
 @external(javascript, "./moke_ffi.mjs", "setTimeoutFn")
@@ -78,18 +103,29 @@ fn header_view() -> Element(Msg) {
 fn moke_view(model: Model) -> Element(Msg) {
   let base_img_class =
     " col-start-1 row-start-1 max-w-full select-none cursor-pointer transition-opacity duration-500 drop-shadow-lg "
-  let #(sleep_class, awake_class, figure_class, caption) = case model {
-    Asleep -> #(
+  let #(sleep_class, awake_class, tired_class, figure_class, caption) = case
+    model
+  {
+    Asleep(_) -> #(
       base_img_class <> "opacity-100 animate-breathe",
+      base_img_class <> "opacity-0",
       base_img_class <> "opacity-0",
       "m-0 hover:scale-105 transition-transform duration-200",
       moke_caption_sleep,
     )
-    Awake -> #(
+    Awake(_) -> #(
       base_img_class <> "opacity-0",
       base_img_class <> "opacity-100 animate-shake",
+      base_img_class <> "opacity-0",
       "m-0",
       moke_caption_awake,
+    )
+    Tired -> #(
+      base_img_class <> "opacity-0",
+      base_img_class <> "opacity-0",
+      base_img_class <> "opacity-100 animate-breathe",
+      "m-0",
+      moke_caption_tired,
     )
   }
   html.figure([attribute.class(figure_class)], [
@@ -107,6 +143,13 @@ fn moke_view(model: Model) -> Element(Msg) {
         attribute.attribute("draggable", "false"),
         event.on_click(ImageClicked),
         attribute.class(awake_class),
+      ]),
+      html.img([
+        attribute.src(moke_src_tired),
+        attribute.alt(moke_alt),
+        attribute.attribute("draggable", "false"),
+        event.on_click(ImageClicked),
+        attribute.class(tired_class),
       ]),
     ]),
     html.figcaption([attribute.class("mt-3 text-sm text-gray-500")], [
