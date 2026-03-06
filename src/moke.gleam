@@ -15,7 +15,11 @@ pub const moke_src_awake = "https://image.silasol.la/moke/awake.webp"
 
 pub const moke_src_tired = "https://image.silasol.la/moke/tired.webp"
 
-pub const moke_alt = "もけだよ"
+pub const moke_alt_sleep = "もけすやすや"
+
+pub const moke_alt_awake = "もけおはよう"
+
+pub const moke_alt_tired = "もけつかれた"
 
 pub const moke_caption_sleep = ":hamster:"
 
@@ -49,14 +53,14 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   case msg {
     ImageClicked ->
       case model {
-        Asleep(n) -> #(Awake(n + 1), revert_after(awake_duration_ms))
+        Asleep(n) -> #(Awake(n + 1), delay_msg(FellAsleep, awake_duration_ms))
         Awake(_) | Tired -> #(model, effect.none())
       }
     FellAsleep ->
       case model {
         Awake(n) ->
           case n >= wake_threshold {
-            True -> #(Tired, revert_after_tired(tired_duration_ms))
+            True -> #(Tired, delay_msg(RecoveredFromTired, tired_duration_ms))
             False -> #(Asleep(n), effect.none())
           }
         Asleep(_) | Tired -> #(model, effect.none())
@@ -65,14 +69,8 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   }
 }
 
-fn revert_after(ms: Int) -> effect.Effect(Msg) {
-  effect.from(fn(dispatch) { set_timeout(fn() { dispatch(FellAsleep) }, ms) })
-}
-
-fn revert_after_tired(ms: Int) -> effect.Effect(Msg) {
-  effect.from(fn(dispatch) {
-    set_timeout(fn() { dispatch(RecoveredFromTired) }, ms)
-  })
+fn delay_msg(msg: Msg, ms: Int) -> effect.Effect(Msg) {
+  effect.from(fn(dispatch) { set_timeout(fn() { dispatch(msg) }, ms) })
 }
 
 @external(javascript, "./moke_ffi.mjs", "setTimeoutFn")
@@ -100,58 +98,71 @@ fn header_view() -> Element(Msg) {
   ])
 }
 
+fn moke_image_layer(
+  src: String,
+  alt: String,
+  is_active: Bool,
+  active_animation: String,
+) -> Element(Msg) {
+  html.img([
+    attribute.src(src),
+    attribute.alt(alt),
+    attribute.attribute("draggable", "false"),
+    attribute.classes([
+      #(
+        "col-start-1 row-start-1 max-w-full select-none cursor-pointer transition-opacity duration-500 drop-shadow-lg",
+        True,
+      ),
+      #("opacity-100 " <> active_animation, is_active),
+      #("opacity-0", !is_active),
+    ]),
+  ])
+}
+
 fn moke_view(model: Model) -> Element(Msg) {
-  let base_img_class =
-    " col-start-1 row-start-1 max-w-full select-none cursor-pointer transition-opacity duration-500 drop-shadow-lg "
-  let #(sleep_class, awake_class, tired_class, figure_class, caption) = case
-    model
-  {
+  let #(figure_class, caption) = case model {
     Asleep(_) -> #(
-      base_img_class <> "opacity-100 animate-breathe",
-      base_img_class <> "opacity-0",
-      base_img_class <> "opacity-0",
       "m-0 hover:scale-105 transition-transform duration-200",
       moke_caption_sleep,
     )
-    Awake(_) -> #(
-      base_img_class <> "opacity-0",
-      base_img_class <> "opacity-100 animate-shake",
-      base_img_class <> "opacity-0",
-      "m-0",
-      moke_caption_awake,
-    )
-    Tired -> #(
-      base_img_class <> "opacity-0",
-      base_img_class <> "opacity-0",
-      base_img_class <> "opacity-100 animate-breathe",
-      "m-0",
-      moke_caption_tired,
-    )
+    Awake(_) -> #("m-0", moke_caption_awake)
+    Tired -> #("m-0", moke_caption_tired)
   }
   html.figure([attribute.class(figure_class)], [
-    html.div([attribute.class("grid place-items-center")], [
-      html.img([
-        attribute.src(moke_src_sleep),
-        attribute.alt(moke_alt),
-        attribute.attribute("draggable", "false"),
-        event.on_click(ImageClicked),
-        attribute.class(sleep_class),
-      ]),
-      html.img([
-        attribute.src(moke_src_awake),
-        attribute.alt(moke_alt),
-        attribute.attribute("draggable", "false"),
-        event.on_click(ImageClicked),
-        attribute.class(awake_class),
-      ]),
-      html.img([
-        attribute.src(moke_src_tired),
-        attribute.alt(moke_alt),
-        attribute.attribute("draggable", "false"),
-        event.on_click(ImageClicked),
-        attribute.class(tired_class),
-      ]),
-    ]),
+    // 3枚の画像を CSS grid で同セルに重ねて配置し opacity で切り替えるクロスフェード
+    // opacity-0 の画像もポインタイベントを受け取るためにクリックは親 div でまとめて処理する
+    html.div(
+      [attribute.class("grid place-items-center"), event.on_click(ImageClicked)],
+      [
+        moke_image_layer(
+          moke_src_sleep,
+          moke_alt_sleep,
+          case model {
+            Asleep(_) -> True
+            _ -> False
+          },
+          "animate-breathe",
+        ),
+        moke_image_layer(
+          moke_src_awake,
+          moke_alt_awake,
+          case model {
+            Awake(_) -> True
+            _ -> False
+          },
+          "animate-shake",
+        ),
+        moke_image_layer(
+          moke_src_tired,
+          moke_alt_tired,
+          case model {
+            Tired -> True
+            _ -> False
+          },
+          "animate-breathe",
+        ),
+      ],
+    ),
     html.figcaption([attribute.class("mt-3 text-sm text-gray-500")], [
       html.text(caption),
     ]),
