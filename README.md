@@ -11,7 +11,7 @@ Gleam が JavaScript にコンパイルされて，ブラウザ上で動作 (CSR
 gleam deps download
 
 # 開発サーバの起動
-gleam run -m lustre/dev -- dev 
+gleam run -m lustre/dev -- start 
 
 # テストの実行
 gleam test
